@@ -8,5 +8,8 @@ module.exports = {
         defaultGuild: "",
         playing: "hide and seek"
     },
+    welcome: {
+        message: "Hello :USER:!"
+    },
     commandPrefix: "."
 };
