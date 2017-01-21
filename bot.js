@@ -7,16 +7,18 @@ logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, { prettyPrint: true, 'timestamp':true });
 
 var co = require('co');
-var Discord = require('discord.js');
-
 var app = {};
+
+var Discord = app.discordjs = require('discord.js');
 var config = app.config = require('./config');
 config.pkg = require("./package.json");
 
 logger.info("bot started, v"+config.pkg.version);
 logger.info("discord.js v"+Discord.version);
 
-var client = config.client = new Discord.Client();
+var client = app.client = new Discord.Client();
+
+var commands = {};
 
 // event listeners
 client.on("error", function (msg) {
@@ -54,12 +56,60 @@ client.once("ready", function () {
         }
     }
 
+    client.on("messageUpdate", function (msg0, msg1) {
+        parseCommand(msg1);
+    });
+
+    client.on("message", parseCommand);
+
 });
+
+function addCommand(cmd) {
+    logger.info("adding command %s", cmd.name);
+    commands[cmd.name] = cmd;
+}
+
+app.addCommand = addCommand;
+
+function parseCommand(msg) {
+    
+    return co(function* () {
+
+        // ignore commands from bots and self
+        if (msg.author.id === client.user.id) return;
+        if (msg.author.bot) return;
+
+        // look for the command prefix
+        if(!msg.content.toLowerCase().startsWith(config.commandPrefix)) return;
+
+        var cmd = {
+            msg: msg,
+            dest: msg.channel
+        };
+
+        logger.debug("got message from [%s] in channel [%s]: ", 
+            msg.author.username, (msg.channel.name || "PM"), msg.content);
+
+        //strip off the prefix and split into args
+        var args = msg.content.substring(config.commandPrefix.length).trim().match(/[^"\s]+|"(?:\\"|[^"])+"/g);
+        var cmdName = cmd.cmdName = args.shift().toLowerCase();
+
+        // yep, ok then see if we have that command loaded
+        if(commands[cmdName] && commands[cmdName].exec) {
+            return commands[cmdName].exec(cmd);
+        }
+
+        // silently ignore any other commands
+
+    });
+}
 
 // start the bot
 co(function *init() {
 
     // init all the commands
+    var plugins = require('./plugins');
+    yield plugins.init(app);
 
     var token = yield client.login(config.discord.token);
     if (!token) {

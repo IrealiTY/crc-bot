@@ -1,6 +1,6 @@
 {
   "name": "crc-bot",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Discord bot for Chaos Raiding Central",
   "main": "bot.js",
   "scripts": {
@@ -11,11 +11,15 @@
     "bot",
     "ffxiv"
   ],
-  "author": [ "IrealiTY", "GeekyDeaks" ],
+  "author": [
+    "IrealiTY",
+    "GeekyDeaks"
+  ],
   "license": "ISC",
   "dependencies": {
     "co": "^4.6.0",
     "discord.js": "^11.0.0",
+    "promisify-node": "^0.4.0",
     "winston": "^2.3.0"
   }
 }
