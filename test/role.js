@@ -43,12 +43,18 @@ describe('role', function () {
         guildRoles = { find: sandbox.stub().returns(guildRole) };
         memberRoles = { };
         responseMsg = { delete: sandbox.stub().returns(Promise.resolve()) };
-        requestMsg = { delete: sandbox.stub().returns(Promise.resolve()) };
+        requestMsg = { 
+            delete: sandbox.stub().returns(Promise.resolve()),
+            author: author
+        };
         member = { 
             get roles() { return memberRoles; },
             addRole: sandbox.stub().returns(Promise.resolve())
         };
-        channel = { send: sandbox.stub().returns(Promise.resolve(responseMsg)) };
+        channel = { 
+            send: sandbox.stub().returns(Promise.resolve(responseMsg)),
+            type: 'text'
+        };
         guild = app.defaultGuild = { 
             get roles() { return guildRoles; },
             fetchMember: sandbox.stub().returns(Promise.resolve(member))
@@ -81,25 +87,49 @@ describe('role', function () {
 
     describe('#iam', function () {
         // guild channel
-        it('should return an error if the role does not exist', function () {
+        it('should fail if the role is not configured', function () {
             guildRoles.find = sandbox.stub().returns(null);
             cmd.args = ["norole"];
-            return expect(app.commands.iam.exec(cmd)).to.be.rejected;
+            return expect(app.commands.iam.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(guildRoles.find.called).is.false;
+                });
         });
 
-        it('should add a person to a role and delete the original message', function () {
+        it('should fail if the role does not exist', function () {
+            guildRoles.find = sandbox.stub().returns(null);
+            cmd.args = ["casters"];
+            return expect(app.commands.iam.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(guildRoles.find.called).is.true;
+                    expect(guild.fetchMember.called).is.false;
+                });
+        });
+
+        it('should add a person to a role and delete all message', function () {
             cmd.args = ['casters'];
             memberRoles.has = sandbox.stub().returns(false);
             return expect(app.commands.iam.exec(cmd)).to.be.fulfilled.
                 then(function () {
-                    //expect(guild.fetchMember.calledOnce).is.true;
-                    //expect(memberRoles.has.calledOnce).is.true;
-                    //expect(channel.send.calledOnce).is.true;
                     expect(member.addRole.calledOnce).is.true;
                     expect(requestMsg.delete.calledOnce).is.true;
                     expect(responseMsg.delete.calledOnce).is.true;
                 });
         });
+
+        it('should add a person to a role and not delete any messages', function () {
+            cmd.args = ['casters'];
+            memberRoles.has = sandbox.stub().returns(false);
+            channel.type = 'pm';
+            return expect(app.commands.iam.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(member.addRole.calledOnce).is.true;
+                    expect(requestMsg.delete.called).is.false;
+                    expect(responseMsg.delete.called).is.false;
+                });
+        });
+
+
     });
 
 });
