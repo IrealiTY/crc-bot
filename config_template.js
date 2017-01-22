@@ -8,8 +8,17 @@ module.exports = {
         defaultGuild: "",
         playing: "hide and seek"
     },
+    role: {
+        "casters": "Casters",
+        "ranged dps": "Ranged DPS",
+        "ranged": "Ranged DPS",
+        "melee dps": "Melee DPS",
+        "melee": "Melee DPS",
+        "healers": "Healers",
+        "tanks": "Tanks"
+    },
     welcome: {
-        message: "Hello :USER:!"
+        message: "Hello :NAME:!"
     },
     commandPrefix: "."
 };

@@ -6,29 +6,35 @@ chai.use(chaiAsPromised);
 var sinon = require('sinon');
 var EventEmitter = require('events');
 
-
-var welcome = require('../plugins/welcome');
-
 describe('welcome', function () {
+
+    var welcome = require('../plugins/welcome');
+    var app = {
+        client: new EventEmitter(),
+        config: {
+            welcome: { message: "welcome message" }
+        }
+    };
+
     describe('#init()', function () {
         it('should return a fulfilled promise', function () {
-            var app = {}
-            app.client = new EventEmitter();
-            expect(welcome.init(app)).to.be.fulilled;
+            return expect(welcome.init(app)).to.be.fulilled;
         });
     });
 
     describe('#onGuildMemberAdd', function () {
 
         it('should send a PM to a new member', function () {
-            var app = {}
-            app.client = new EventEmitter();
-            var config = {
-                welcome: {
-                    message: "welcome message"
-                }
-            };
-            app.config = config;
+            var send = sinon.stub().returns(Promise.resolve());
+            var member = { send: send };
+
+            app.client.emit("guildMemberAdd", member);
+            expect(send.callCount).to.equal(1);
+        });
+
+        it('should get the display name', function () {
+
+            app.config.welcome.message = "welcome :NAME:";
             var username = "Test User";
             var send = sinon.stub().returns(Promise.resolve());
             var displayName = sinon.stub().returns(username);
@@ -36,16 +42,45 @@ describe('welcome', function () {
                 send: send,
                 get displayName() { return displayName() }
             };
-            expect(welcome.init(app)).to.be.fulilled;
+
             app.client.emit("guildMemberAdd", member);
-            expect(displayName.callCount).to.equal(1);
+            expect(displayName.called).is.true;
+            expect(send.callCount).to.equal(1);
+        });
+
+        it('should get the user ID', function () {
+
+            app.config.welcome.message = "welcome :MENTION:";
+            var userid = "666";
+            var send = sinon.stub().returns(Promise.resolve());
+            var user = sinon.stub().returns(userid);
+            var member = {
+                send: send,
+                get user() { return user() }
+            };
+
+            app.client.emit("guildMemberAdd", member);
+            expect(user.called).is.true;
             expect(send.callCount).to.equal(1);
         });
 
 
+
     });
 
-    describe.skip('#onGuildMemberRemove', function () {
+    describe('#onGuildMemberRemove', function () {
+
+        // not sure how to check this...
+        it('should log the member leaving', function () {
+
+            var username = 'Test user';
+            var displayName = sinon.stub().returns(username);
+            var member = {
+                get displayName() { return displayName() }
+            };
+            app.client.emit("guildMemberRemove", member);
+            expect(displayName.called).is.true;
+        });
 
     });
 

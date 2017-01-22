@@ -6,6 +6,7 @@ logger.level = 'debug';
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, { prettyPrint: true, 'timestamp':true });
 
+var Warning = require('./lib/warning');
 var co = require('co');
 var app = {};
 
@@ -91,12 +92,20 @@ function parseCommand(msg) {
             msg.author.username, (msg.channel.name || "PM"), msg.content);
 
         //strip off the prefix and split into args
-        var args = msg.content.substring(config.commandPrefix.length).trim().match(/[^"\s]+|"(?:\\"|[^"])+"/g);
+        var args = cmd.args = msg.content.substring(config.commandPrefix.length).trim().match(/[^"\s]+|"(?:\\"|[^"])+"/g);
         var cmdName = cmd.cmdName = args.shift().toLowerCase();
 
         // yep, ok then see if we have that command loaded
         if(commands[cmdName] && commands[cmdName].exec) {
-            return commands[cmdName].exec(cmd);
+            try {
+                yield commands[cmdName].exec(cmd);
+            } catch(err) {
+                if(err instanceof Warning) {
+                    logger.warn(err.toString());
+                } else {
+                    logger.error(err);
+                }
+            }
         }
 
         // silently ignore any other commands

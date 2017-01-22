@@ -2,24 +2,29 @@
 var logger = require('winston');
 var co = require('co');
 
-var app;
+var config;
 
-function init(a) {
-    app = a;
+function init(app) {
+    config = app.config.welcome;
     app.client.on('guildMemberAdd', guildMemberAdd);
+    app.client.on('guildMemberRemove', guildMemberRemove);
     return Promise.resolve();
 }
 
 function guildMemberAdd(member) {
     return co(function *guildMemberAdd() {
-        // get the member name
-        var name = member.displayName;
-        
-        // replace :NAME: with member display name
-        var msg = app.config.welcome.message.replace(/:USER:/g, name);
+
+        logger.verbose("%s (%s) joined the guild", member.displayName, member.user);
+        var msg = config.message.
+            replace(/:NAME:/g, member.displayName).
+            replace(/:MENTION:/g, member.user);
         return member.send(msg);
 
     });
+}
+
+function guildMemberRemove(member) {
+    logger.info("%s (%s) left the guild", member.displayName, member.user);
 }
 
 module.exports.init = init;

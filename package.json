@@ -4,7 +4,7 @@
   "description": "Discord bot for Chaos Raiding Central",
   "main": "bot.js",
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha"
+    "test": "node_modules/mocha/bin/mocha --bail"
   },
   "keywords": [
     "discord",

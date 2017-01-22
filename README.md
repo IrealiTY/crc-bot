@@ -1,4 +1,4 @@
-# crc-bot
+# crc-bot [![Build Status](https://travis-ci.org/IrealiTY/crc-bot.svg?branch=master)](https://travis-ci.org/IrealiTY/crc-bot)
 
 ## Discord Bot for Chaos Raiding Central
 
