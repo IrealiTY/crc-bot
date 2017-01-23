@@ -46,10 +46,14 @@ function iam(cmd) {
                 // check if the member is already in the role
                 if (member.roles.has(role.id)) {
                     // already in the role
-                    response = yield cmd.dest.send("you are already in " + roleName);
+                    response = yield cmd.dest.send("You are already in " + roleName);
                 } else {
                     // add the role
+<<<<<<< HEAD
                     logger.info('adding %s [%s] to role %s', author.username, author, roleName);
+=======
+                    logger.info('Adding %s [%s] to role %s', author.displayName, author, roleName);
+>>>>>>> 23a22ee26d7a073f58aed9d8f60713c04f486e8c
                     yield member.addRole(role);
                     response = yield cmd.dest.send(":ok: You now have " + roleName + " role");
                 }

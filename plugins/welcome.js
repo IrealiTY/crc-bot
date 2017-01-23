@@ -14,7 +14,7 @@ function init(app) {
 function guildMemberAdd(member) {
     return co(function *guildMemberAdd() {
 
-        logger.verbose("%s (%s) joined the guild", member.displayName, member.user);
+        logger.verbose("%s (%s) joined the CRC", member.displayName, member.user);
         var msg = config.message.
             replace(/:NAME:/g, member.displayName).
             replace(/:MENTION:/g, member.user);
@@ -24,7 +24,7 @@ function guildMemberAdd(member) {
 }
 
 function guildMemberRemove(member) {
-    logger.info("%s (%s) left the guild", member.displayName, member.user);
+    logger.info("%s (%s) left the CRC", member.displayName, member.user);
 }
 
 module.exports.init = init;
