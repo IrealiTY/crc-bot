@@ -31,13 +31,13 @@ function iam(cmd) {
         var response;
         var author = cmd.msg.author;
         if(!config.role[roleName.toLowerCase()]) {
-            logger.warn("Unable to set role for %s [%s], role [%s] is not configured", author.displayName, author, roleName)
+            logger.warn("Unable to set role for %s [%s], role [%s] is not configured", author.username, author, roleName)
             response = yield cmd.dest.send("Sorry, the role "+roleName+" does not exist");
 
         } else {
             var role = app.defaultGuild.roles.find('name', config.role[roleName.toLowerCase()]);
             if (!role) {
-                logger.warn("Unable to set role for %s [%s], role [%s] is does not exist", author.displayName, author, roleName)
+                logger.warn("Unable to set role for %s [%s], role [%s] is does not exist", author.username, author, roleName)
                 response = yield cmd.dest.send("Sorry, the role " + roleName + " does not exist");
             } else {
 
@@ -49,7 +49,7 @@ function iam(cmd) {
                     response = yield cmd.dest.send("you are already in " + roleName);
                 } else {
                     // add the role
-                    logger.info('adding %s [%s] to role %s', author.displayName, author, roleName);
+                    logger.info('adding %s [%s] to role %s', author.username, author, roleName);
                     yield member.addRole(role);
                     response = yield cmd.dest.send(":ok: You now have " + roleName + " role");
                 }
@@ -71,13 +71,13 @@ function iamnot(cmd) {
         var response;
         var author = cmd.msg.author;
         if(!config.role[roleName.toLowerCase()]) {
-            logger.warn("Unable to unset role for %s [%s], role [%s] is not configured", author.displayName, author, roleName)
+            logger.warn("Unable to unset role for %s [%s], role [%s] is not configured", author.username, author, roleName)
             response = yield cmd.dest.send("Sorry, the role "+roleName+" does not exist");
 
         } else {
             var role = app.defaultGuild.roles.find('name', config.role[roleName.toLowerCase()]);
             if (!role) {
-                logger.warn("Unable to unset role for %s [%s], role [%s] is does not exist", author.displayName, author, roleName)
+                logger.warn("Unable to unset role for %s [%s], role [%s] is does not exist", author.username, author, roleName)
                 response = yield cmd.dest.send("Sorry, the role " + roleName + " does not exist");
             } else {
 
@@ -86,7 +86,7 @@ function iamnot(cmd) {
                 // check if the member is already in the role
                 if (member.roles.has(role.id)) {
                     // remove the role
-                    logger.info('removing %s [%s] from role %s', author.displayName, author, roleName);
+                    logger.info('removing %s [%s] from role %s', author.username, author, roleName);
                     yield member.removeRole(role);
                     response = yield cmd.dest.send("You have been removed from " + roleName);
                 } else {
