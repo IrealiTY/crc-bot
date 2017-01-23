@@ -30,3 +30,8 @@
 9. Start the bot
 
         node bot.js
+        
+        
+====
+
+Credit goes to [GeekyDeaks](https://github.com/deaks-kt)
