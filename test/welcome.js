@@ -1,4 +1,6 @@
 /* global describe, before, it */
+'use strict';
+
 var chai = require('chai');
 var expect = chai.expect;
 var chaiAsPromised = require("chai-as-promised");

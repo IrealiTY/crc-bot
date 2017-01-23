@@ -17,6 +17,12 @@ module.exports = {
         "healers": "Healers",
         "tanks": "Tanks"
     },
+    throttle: {
+        "player_lfg": {
+            maxTokens: 5,
+            tokenInterval: 3600
+        } 
+    },
     welcome: {
         message: "Hello :NAME:!"
     },
