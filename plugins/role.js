@@ -49,7 +49,7 @@ function iam(cmd) {
                     response = yield cmd.dest.send("you are already in " + roleName);
                 } else {
                     // add the role
-                    logger.info('adding %s [%s] to role %s', author.displayName, author, roleName)
+                    logger.info('adding %s [%s] to role %s', author.displayName, author, roleName);
                     yield member.addRole(role);
                     response = yield cmd.dest.send(":ok: You now have " + roleName + " role");
                 }
@@ -58,8 +58,7 @@ function iam(cmd) {
 
         // only try and clean up if it's a guild channel
         if(cmd.dest.type === 'text') {
-            yield cmd.msg.delete(expire);
-            yield response.delete(expire);
+            yield Promise.all([cmd.msg.delete(expire), response.delete(expire)]);
         }
 
     });
@@ -67,7 +66,39 @@ function iam(cmd) {
 
 function iamnot(cmd) {
     return co(function *iamnot() {
+        var expire = 2000;
+        var roleName = cmd.args.join(" ").trim();
+        var response;
+        var author = cmd.msg.author;
+        if(!config.role[roleName.toLowerCase()]) {
+            logger.warn("Unable to unset role for %s [%s], role [%s] is not configured", author.displayName, author, roleName)
+            response = yield cmd.dest.send("Sorry, the role "+roleName+" does not exist");
 
+        } else {
+            var role = app.defaultGuild.roles.find('name', config.role[roleName.toLowerCase()]);
+            if (!role) {
+                logger.warn("Unable to unset role for %s [%s], role [%s] is does not exist", author.displayName, author, roleName)
+                response = yield cmd.dest.send("Sorry, the role " + roleName + " does not exist");
+            } else {
+
+                var member = yield app.defaultGuild.fetchMember(cmd.msg.author);
+
+                // check if the member is already in the role
+                if (member.roles.has(role.id)) {
+                    // remove the role
+                    logger.info('removing %s [%s] from role %s', author.displayName, author, roleName);
+                    yield member.removeRole(role);
+                    response = yield cmd.dest.send("You have been removed from " + roleName);
+                } else {
+                    response = yield cmd.dest.send("You are not in " + roleName );
+                }
+            }
+        }
+
+        // only try and clean up if it's a guild channel
+        if(cmd.dest.type === 'text') {
+            yield Promise.all([cmd.msg.delete(expire), response.delete(expire)]);
+        }
     });
 }
 

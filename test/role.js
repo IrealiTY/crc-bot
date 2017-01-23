@@ -49,7 +49,8 @@ describe('role', function () {
         };
         member = { 
             get roles() { return memberRoles; },
-            addRole: sandbox.stub().returns(Promise.resolve())
+            addRole: sandbox.stub().returns(Promise.resolve()),
+            removeRole: sandbox.stub().returns(Promise.resolve())
         };
         channel = { 
             send: sandbox.stub().returns(Promise.resolve(responseMsg)),
@@ -124,6 +125,53 @@ describe('role', function () {
             return expect(app.commands.iam.exec(cmd)).to.be.fulfilled.
                 then(function () {
                     expect(member.addRole.calledOnce).is.true;
+                    expect(requestMsg.delete.called).is.false;
+                    expect(responseMsg.delete.called).is.false;
+                });
+        });
+
+
+    });
+
+    describe('#iamnot', function () {
+        // guild channel
+        it('should fail if the role is not configured', function () {
+            guildRoles.find = sandbox.stub().returns(null);
+            cmd.args = ["norole"];
+            return expect(app.commands.iamnot.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(guildRoles.find.called).is.false;
+                });
+        });
+
+        it('should fail if the role does not exist', function () {
+            guildRoles.find = sandbox.stub().returns(null);
+            cmd.args = ["casters"];
+            return expect(app.commands.iamnot.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(guildRoles.find.called).is.true;
+                    expect(guild.fetchMember.called).is.false;
+                });
+        });
+
+        it('should remove a person from a role and delete all message', function () {
+            cmd.args = ['casters'];
+            memberRoles.has = sandbox.stub().returns(true);
+            return expect(app.commands.iamnot.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(member.removeRole.calledOnce).is.true;
+                    expect(requestMsg.delete.calledOnce).is.true;
+                    expect(responseMsg.delete.calledOnce).is.true;
+                });
+        });
+
+        it('should remove a person from a role and not delete any messages', function () {
+            cmd.args = ['casters'];
+            memberRoles.has = sandbox.stub().returns(true);
+            channel.type = 'pm';
+            return expect(app.commands.iamnot.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(member.removeRole.calledOnce).is.true;
                     expect(requestMsg.delete.called).is.false;
                     expect(responseMsg.delete.called).is.false;
                 });
