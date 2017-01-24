@@ -34,4 +34,4 @@
         
 ====
 
-Credit goes to [GeekyDeaks](https://github.com/deaks-kt)
+Credit goes to [GeekyDeaks](https://github.com/GeekyDeaks)
