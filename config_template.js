@@ -23,6 +23,11 @@ module.exports = {
             tokenInterval: 3600
         } 
     },
+    monitor: {
+        channels: [ "blah" ],
+        output: "monitor",
+        events: [ "message", "messageDelete", "messageUpdate" ]
+    },
     welcome: {
         message: "Hello :NAME:!"
     },
