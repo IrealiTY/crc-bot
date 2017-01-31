@@ -132,6 +132,17 @@ describe('role', function () {
                 });
         });
 
+        it('should fail if no defaultGuild', function () {
+            cmd.args = ['casters'];
+            memberRoles.has = sandbox.stub().returns(false);
+            app.defaultGuild = undefined;
+            return expect(app.commands.iam.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(guildRoles.find.called).is.false;
+                    expect(requestMsg.delete.calledOnce).is.true;
+                    expect(responseMsg.delete.calledOnce).is.true;
+                });
+        });
 
     });
 
@@ -178,6 +189,18 @@ describe('role', function () {
                     expect(responseMsg.delete.called).is.false;
                 });
         });
+
+        it('should fail if no defaultGuild', function () {
+            cmd.args = ['casters'];
+            memberRoles.has = sandbox.stub().returns(false);
+            app.defaultGuild = undefined;
+            return expect(app.commands.iamnot.exec(cmd)).to.be.fulfilled.
+                then(function () {
+                    expect(guildRoles.find.called).is.false;
+                    expect(requestMsg.delete.calledOnce).is.true;
+                    expect(responseMsg.delete.calledOnce).is.true;
+                });
+        });        
 
 
     });

@@ -31,13 +31,16 @@ function iam(cmd) {
         var response;
         var author = cmd.msg.author;
         if(!config.role[roleName.toLowerCase()]) {
-            logger.warn("Unable to set role for %s [%s], role [%s] is not configured", author.username, author, roleName)
+            logger.warn("Unable to set role for %s [%s], role [%s] is not configured", author.username, author, roleName);
             response = yield cmd.dest.send("Sorry, the role "+roleName+" does not exist");
 
+        } else if(!app.defaultGuild) {
+            logger.warn("Unable to set role for %s [%s], no defaultGuild", author.username, author);
+            response = yield cmd.dest.send("Sorry, I am not able to determine the guild");
         } else {
             var role = app.defaultGuild.roles.find('name', config.role[roleName.toLowerCase()]);
             if (!role) {
-                logger.warn("Unable to set role for %s [%s], role [%s] is does not exist", author.username, author, roleName)
+                logger.warn("Unable to set role for %s [%s], role [%s] is does not exist", author.username, author, roleName);
                 response = yield cmd.dest.send("Sorry, the role " + roleName + " does not exist");
             } else {
 
@@ -74,6 +77,9 @@ function iamnot(cmd) {
             logger.warn("Unable to unset role for %s [%s], role [%s] is not configured", author.username, author, roleName)
             response = yield cmd.dest.send("Sorry, the role "+roleName+" does not exist");
 
+        } else if(!app.defaultGuild) {
+            logger.warn("Unable to unset role for %s [%s], no defaultGuild", author.username, author);
+            response = yield cmd.dest.send("Sorry, I am not able to determine the guild");
         } else {
             var role = app.defaultGuild.roles.find('name', config.role[roleName.toLowerCase()]);
             if (!role) {
