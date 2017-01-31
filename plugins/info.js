@@ -23,9 +23,9 @@ function info(cmd) {
             "   Version: "+config.pkg.version,
             "discord.js: "+app.discordjs.version,
             "      Node: "+process.version,
-            "     Guild: "+app.defaultGuild.name,
-            "     Owner: "+app.defaultGuild.owner.displayName,
-            "  Channels: "+app.defaultGuild.channels.array().length
+            "     Guild: "+ (app.defaultGuild ? app.defaultGuild.name : "N/A"),
+            "     Owner: "+ (app.defaultGuild ? app.defaultGuild.owner.displayName : "N/A"),
+            "  Channels: "+ (app.defaultGuild ? app.defaultGuild.channels.array().length : "N/A")
         ].join("\n") + "```");
 
     });
