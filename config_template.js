@@ -10,12 +10,18 @@ module.exports = {
     },
     role: {
         "casters": "Casters",
+        "caster": "Casters",
+        "mage": "Casters",
         "ranged dps": "Ranged DPS",
         "ranged": "Ranged DPS",
+        "rangeds": "Ranged DPS",
         "melee dps": "Melee DPS",
         "melee": "Melee DPS",
+        "melees": "Melee DPS",
         "healers": "Healers",
-        "tanks": "Tanks"
+        "healer": "Healers",
+        "tanks": "Tanks",
+        "tank": "Tanks"
     },
     throttle: {
         "player_lfg": {
