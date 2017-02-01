@@ -53,7 +53,7 @@ function logMessageEvent(info, colour, msg) {
 
     if(app.config.monitor.output && app.defaultGuild) {
 
-        output.sendMessage("**"+info + "** in **" + (msg.channel.name || "PM") + "** at (" + msg.createdAt.toISOString() + ")", { embed: {
+        output.sendMessage("[" + msg.createdAt.toLocaleTimeString() + "] **" + info + "** " + msg.channel , { embed: {
             color: colour,
             author: {
                 name: msg.author.username,
