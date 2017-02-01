@@ -30,7 +30,6 @@ module.exports = {
         } 
     },
     monitor: {
-        channels: [ "blah" ],
         output: "monitor",
         events: [ "message", "messageDelete", "messageUpdate" ]
     },

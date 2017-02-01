@@ -4,6 +4,7 @@ var co = require('co');
 var util = require('util');
 
 var app;
+var output;
 
 function init(a) {
     app = a;
@@ -13,16 +14,21 @@ function init(a) {
         logger.info('setting up monitoring of event: %s', event);
         switch(event) {
             case "message":
-                app.client.on("message", function(msg) { logEvent("New Message", msg) } );
+                app.client.on("message", function(msg) { logMessageEvent("New Message", 0x3030A0, msg) } );
                 break;
             case "messageUpdate":
-                app.client.on("messageUpdate", function(msg0, msg1) { logEvent("Message Update", msg1) });
+                app.client.on("messageUpdate", function(msg0, msg1) { logMessageEvent("Message Updated", 0x30A030, msg1) });
                 break;
             case "messageDelete":
-                app.client.on("messageDelete", function(msg) { logEvent("Message Deleted", msg) });
+                app.client.on("messageDelete", function(msg) { logMessageEvent("Message Deleted", 0xA03030, msg) });
                 break;
             default:
                 logger.warn("monitor: unknown event type: %s", event);
+        }
+    });
+    app.client.once("ready", function() {
+        if(app.config.monitor.output && app.defaultGuild) {
+            output = app.defaultGuild.channels.find('name', app.config.monitor.output);
         }
     });
     return Promise.resolve();
@@ -38,18 +44,23 @@ function replaceMentions(msg) {
     }));
 }
 
-function logEvent(info, msg) {
+function logMessageEvent(info, colour, msg) {
 
-    if(app.config.monitor.channels.indexOf(msg.channel.name) === -1) return;
+    if(!output || (output.id === msg.channel.id)) return; 
 
     var text = replaceMentions(msg);
     logger.info("%s: %s", info, text);
 
     if(app.config.monitor.output && app.defaultGuild) {
-        // try and get the output
-        var output = app.defaultGuild.channels.find('name', app.config.monitor.output);
-        if(!output) return;
-        output.send(util.format("%s: ```%s```", info, text));
+
+        output.sendMessage("**"+info + "** in **" + (msg.channel.name || "PM") + "** at (" + msg.createdAt.toISOString() + ")", { embed: {
+            color: colour,
+            author: {
+                name: msg.author.username,
+                icon_url: msg.author.avatarURL
+            },
+            description: msg.content
+        }});
     }
 
 }
