@@ -68,6 +68,16 @@ client.once("ready", function () {
 function addCommand(cmd) {
     logger.info("adding command %s", cmd.name);
     commands[cmd.name] = cmd;
+
+    // add the aliases
+    if(cmd.alias) {
+        cmd.alias.forEach(function(alias) {
+            logger.info("adding alias %s for command %s", alias, cmd.name);
+            commands[alias] = cmd;
+        });
+    }
+
+
 }
 
 app.addCommand = addCommand;
@@ -80,8 +90,19 @@ function parseCommand(msg) {
         if (msg.author.id === client.user.id) return;
         if (msg.author.bot) return;
 
-        // look for the command prefix
-        if(!msg.content.toLowerCase().startsWith(config.commandPrefix)) return;
+        var content;
+        
+        // look for the command prefix or PM without the prefix
+        if(msg.content.toLowerCase().startsWith(config.commandPrefix)) {
+            // strip off the prefix
+            content = msg.content.substring(config.commandPrefix.length);
+        } else if (msg.channel.type === "dm") {
+            // see if we can still parse a command from the text
+            content = msg.content;
+        } else {
+            // these are not the droids you are looking for...
+            return;
+        }
 
         var cmd = {
             msg: msg,
@@ -89,10 +110,10 @@ function parseCommand(msg) {
         };
 
         logger.debug("got message from [%s] in channel [%s]: ", 
-            msg.author.username, (msg.channel.name || "PM"), msg.content);
+            msg.author.username, (msg.channel.name || "PM"), content);
 
-        //strip off the prefix and split into args
-        var args = cmd.args = msg.content.substring(config.commandPrefix.length).trim().match(/[^"\s]+|"(?:\\"|[^"])+"/g);
+        // split into command and args
+        var args = cmd.args = content.trim().match(/[^"\s]+|"(?:\\"|[^"])+"/g);
         var cmdName = cmd.cmdName = args.shift().toLowerCase();
 
         // yep, ok then see if we have that command loaded

@@ -12,11 +12,13 @@ function init(a) {
     app.addCommand({
         name: "iam",
         desc: "Set role",
+        alias: ["im", "am"],
         exec: iam
     });
     app.addCommand({
         name: "iamnot",
         desc: "Reset role",
+        alias: ["iamn", "imnot", "imn", "amnot"],
         exec: iamnot
     });
     config = app.config;

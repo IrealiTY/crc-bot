@@ -17,7 +17,7 @@ function init(a) {
                 app.client.on("message", function(msg) { logMessageEvent("New Message", 0x3030A0, msg) } );
                 break;
             case "messageUpdate":
-                app.client.on("messageUpdate", function(msg0, msg1) { logMessageEvent("Message Updated", 0x30A030, msg1) });
+                app.client.on("messageUpdate", logMessageUpdatedEvent);
                 break;
             case "messageDelete":
                 app.client.on("messageDelete", function(msg) { logMessageEvent("Message Deleted", 0xA03030, msg) });
@@ -62,6 +62,50 @@ function logMessageEvent(info, colour, msg) {
             description: msg.content
         }});
     }
+
+}
+
+function logMessageUpdatedEvent(msg0, msg1) {
+
+    if(!output || (output.id === msg0.channel.id)) return; 
+
+    var text0 = replaceMentions(msg0);
+    var text1 = replaceMentions(msg1);
+    logger.info("Message Updated From: %s\nTo: %s", text0, text1);
+
+    if(!app.config.monitor.output || !app.defaultGuild)  return;
+
+
+    co(function *() {
+
+        yield output.sendMessage("[" + msg0.createdAt.toLocaleTimeString() + "] **Message Updated** " + msg0.channel + " From:", {
+            split: true,
+            embed: {
+                color: 0x30A030,
+                author: {
+                    name: msg0.author.username,
+                    icon_url: msg0.author.avatarURL
+                },
+                description: msg0.content
+
+            }
+        });
+
+        yield output.sendMessage("[" + msg1.createdAt.toLocaleTimeString() + "] **Message Updated** " + msg1.channel + " To:", {
+            split: true,
+            embed: {
+                color: 0x30A030,
+                author: {
+                    name: msg1.author.username,
+                    icon_url: msg1.author.avatarURL
+                },
+                description: msg1.content
+
+            }
+        });
+
+    });
+
 
 }
 
