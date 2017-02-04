@@ -44,7 +44,10 @@ module.exports = {
     },
     monitor: {
         output: "monitor",
-        events: [ "message", "messageDelete", "messageUpdate" ]
+        events: [ 
+            "message", "messageDelete", "messageUpdate",
+            "guildMemberAdd", "guildMemberRemove"
+        ]
     },
     welcome: {
         message: "Hello :NAME:!"

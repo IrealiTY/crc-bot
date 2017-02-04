@@ -14,13 +14,19 @@ function init(a) {
         logger.info('setting up monitoring of event: %s', event);
         switch(event) {
             case "message":
-                app.client.on("message", function(msg) { logMessageEvent("New Message", 0x3030A0, msg) } );
+                app.client.on("message", logMessageEvent);
                 break;
             case "messageUpdate":
                 app.client.on("messageUpdate", logMessageUpdatedEvent);
                 break;
             case "messageDelete":
-                app.client.on("messageDelete", function(msg) { logMessageEvent("Message Deleted", 0xA03030, msg) });
+                app.client.on("messageDelete", logMessageDeleteEvent);
+                break;
+            case "guildMemberAdd":
+                app.client.on("guildMemberAdd", logGuildMemberAdd);
+                break;
+            case "guildMemberRemove":
+                app.client.on("guildMemberRemove", logGuildMemberRemove);
                 break;
             default:
                 logger.warn("monitor: unknown event type: %s", event);
@@ -44,25 +50,76 @@ function replaceMentions(msg) {
     }));
 }
 
-function logMessageEvent(info, colour, msg) {
+function logGuildMemberAdd(member) {
+    if(!output) return; 
 
-    if(!output || (output.id === msg.channel.id)) return; 
-
-    var text = replaceMentions(msg);
-    logger.info("%s: %s", info, text);
+    logger.info("User Joined: %s (%s)", member.displayName, member.user.id);
 
     if(app.config.monitor.output && app.defaultGuild) {
 
-        output.sendMessage("[" + msg.createdAt.toLocaleTimeString() + "] **" + info + "** " + msg.channel , { embed: {
-            color: colour,
+        output.sendMessage("[" + new Date().toLocaleTimeString() + "] **User Joined**", { embed: {
+            color: 0x30A030,
+            author: {
+                name: member.displayName + " ("+member.user.id+")",
+                icon_url: member.user.avatarURL
+            }
+        }});
+    }   
+}
+
+function logGuildMemberRemove(member) {
+    if(!output) return; 
+
+    logger.info("User Left: %s (%s)", member.displayName, member.user.id);
+
+    if(app.config.monitor.output && app.defaultGuild) {
+
+        output.sendMessage("[" + new Date().toLocaleTimeString() + "] **User Left**", { embed: {
+            color: 0xA03030,
+            author: {
+                name: member.displayName + " ("+member.user.id+")",
+                icon_url: member.user.avatarURL
+            }
+        }});
+    }   
+}
+
+function logMessageEvent(msg) {
+    if(!output || (output.id === msg.channel.id)) return; 
+
+    var text = replaceMentions(msg);
+    logger.info("New Message from %s in %s: %s", msg.author.username, msg.channel, text);
+
+    if(app.config.monitor.output && app.defaultGuild) {
+
+        output.sendMessage("[" + msg.createdAt.toLocaleTimeString() + "] **New Message** " + msg.channel , { embed: {
+            color: 0x3030A0,
             author: {
                 name: msg.author.username,
                 icon_url: msg.author.avatarURL
             },
             description: msg.content
         }});
-    }
+    }    
+}
 
+function logMessageDeleteEvent(msg) {
+    if(!output || (output.id === msg.channel.id)) return; 
+
+    var text = replaceMentions(msg);
+    logger.info("Message Deleted in %s: %s", msg.channel, text);
+
+    if(app.config.monitor.output && app.defaultGuild) {
+
+        output.sendMessage("[" + msg.createdAt.toLocaleTimeString() + "] **Message Deleted** " + msg.channel , { embed: {
+            color: 0xA03030,
+            author: {
+                name: msg.author.username,
+                icon_url: msg.author.avatarURL
+            },
+            description: msg.content
+        }});
+    }    
 }
 
 function logMessageUpdatedEvent(msg0, msg1) {
@@ -71,10 +128,10 @@ function logMessageUpdatedEvent(msg0, msg1) {
 
     var text0 = replaceMentions(msg0);
     var text1 = replaceMentions(msg1);
-    logger.info("Message Updated From: %s\nTo: %s", text0, text1);
+    logger.info("Message Updated by %s in %s\n-- Original --------------\n%s\n-- Updated --------------\n%s", 
+        msg1.author.username, msg1.channel, text0, text1);
 
     if(!app.config.monitor.output || !app.defaultGuild)  return;
-
 
     co(function *() {
 
@@ -108,6 +165,5 @@ function logMessageUpdatedEvent(msg0, msg1) {
 
 
 }
-
 
 module.exports.init = init;
