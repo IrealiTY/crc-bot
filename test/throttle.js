@@ -25,11 +25,13 @@ describe('throttle', function () {
     var author;
     var channel;
     var sandbox;
+    var response;
 
     beforeEach('reset', function () {
 
         sandbox = sinon.sandbox.create();
         sandbox.useFakeTimers();
+        
         channel = { name: "test_channel" };
         author = { id: 666 };
 
@@ -70,14 +72,18 @@ describe('throttle', function () {
 
         it('should delete the 6-10 messages', function () {
             var msg;
+            var response;
 
             for(var i = 0; i < 10; i++) {
+                response = { delete: sandbox.stub() };
+                channel.send = sandbox.stub().returns(Promise.resolve(response));
                 msg = { 
                     author: author, channel: channel, id: i,
                     delete: sandbox.stub().returns(Promise.resolve())
                 };
                 app.client.emit("message", msg);
                 expect(msg.delete.called).is.equal(i >= 5);
+                expect(channel.send.called).is.equal(i >= 5);
             }
 
         });

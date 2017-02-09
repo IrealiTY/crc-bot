@@ -88,7 +88,7 @@ function logMessageEvent(msg) {
     if(!output || (output.id === msg.channel.id)) return; 
 
     var text = replaceMentions(msg);
-    logger.info("New Message from %s in %s: %s", msg.author.username, msg.channel, text);
+    logger.info("New Message from %s in %s: %s", msg.author.username, msg.channel.name, text);
 
     if(app.config.monitor.output && app.defaultGuild) {
 
@@ -107,7 +107,7 @@ function logMessageDeleteEvent(msg) {
     if(!output || (output.id === msg.channel.id)) return; 
 
     var text = replaceMentions(msg);
-    logger.info("Message Deleted in %s: %s", msg.channel, text);
+    logger.info("Message Deleted in %s: %s", msg.channel.name, text);
 
     if(app.config.monitor.output && app.defaultGuild) {
 
@@ -129,7 +129,7 @@ function logMessageUpdatedEvent(msg0, msg1) {
     var text0 = replaceMentions(msg0);
     var text1 = replaceMentions(msg1);
     logger.info("Message Updated by %s in %s\n-- Original --------------\n%s\n-- Updated --------------\n%s", 
-        msg1.author.username, msg1.channel, text0, text1);
+        msg1.author.username, msg1.channel.name, text0, text1);
 
     if(!app.config.monitor.output || !app.defaultGuild)  return;
 

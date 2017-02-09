@@ -35,6 +35,11 @@ function checkMessage(msg) {
     if(!bucket.drain()) {
         // failed to drain the bucket - user has exceeded message limit
         msg.delete(expire); // dump the response
+        msg.channel.send(msg.author + " you cannot post for " + 
+                Math.ceil( (bucket.nextFill - Date.now()) / 1000 ) + " seconds").
+        then(function(response) {
+            response.delete(3000);
+        });
     } 
 
 }
