@@ -1,5 +1,7 @@
 'use strict';
 
+var fs = require(' fs ');
+
 module.exports = {
 
     discord: {
@@ -50,7 +52,7 @@ module.exports = {
         ]
     },
     welcome: {
-        message: "Hello :NAME:!"
+        message: fs.readFileSync("welcome.txt", "utf8")
     },
     commandPrefix: "."
 };
