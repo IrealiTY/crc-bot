@@ -1,5 +1,6 @@
 'use strict';
 
+var util = require('util');
 var logger = require('winston');
 logger.level = 'debug';
 // fudge - by default winston disables timestamps on the console
@@ -35,8 +36,12 @@ client.on("debug", function (msg) {
     logger.debug(msg);
 });
 
-client.on("disconnected", function () {
-    logger.info("Disconnected from discord");
+client.on("disconnect", function (e) {
+    logger.debug("Disconnected from discord: " + util.inspect(e));
+    // workaround discord.js not re-connecting after a clean disconnect
+    if(e.code === 1000) {
+        client.destroy().then(client.login.bind(client)); 
+    }
 });
 
 client.once("ready", function () {

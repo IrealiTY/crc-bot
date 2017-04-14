@@ -1,0 +1,24 @@
+**PLEASE READ THE FOLLOWING!**
+
+Hello :NAME:! I am the Chaos Raiding Central BOT - Welcome. Please make sure to read the rules in #announcements before posting.
+
+In order to identify yourself and post on our channels, we need to assign you a role. Please reply to this private message with one of the following commands based on your primary role in FFXIV (exactly as written below) :
+
+.iam PLD
+.iam WAR
+.iam DRK
+.iam WHM
+.iam SCH
+.iam AST
+.iam MCH
+.iam BRD
+.iam BLM
+.iam SMN
+.iam MNK
+.iam DRG
+.iam NIN
+.iam RDM
+
+Should you have any questions, feel free to contact one of the administrators (Saeris Illyan / Bellandy Illyan)
+
+See you soon!
