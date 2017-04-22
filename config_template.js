@@ -8,7 +8,9 @@ module.exports = {
         token: "DISCORD_TOKEN",
         adminRole: "admin",
         defaultGuild: "",
-        playing: "hide and seek"
+        playing: "hide and seek",
+        // set 'raw' to 'true' to log all events from discord
+        raw: false
     },
     role: {
         "casters": "Casters",

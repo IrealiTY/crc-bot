@@ -44,6 +44,13 @@ client.on("disconnect", function (e) {
     }
 });
 
+if(config.discord.raw) {
+    client.on("raw", function(data) {
+        logger.debug("RAW: ", data);
+    });
+}
+
+
 client.once("ready", function () {
     if(config.discord.playing) {
         client.user.setGame(config.discord.playing);
