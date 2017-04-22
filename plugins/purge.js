@@ -2,6 +2,7 @@
 var logger = require('winston');
 var co = require('co');
 var cron = require('cron-parser');
+var util = require('util');
 
 var MAX_MESSAGES = 50;
 
@@ -43,7 +44,7 @@ Purge.prototype.purgeMessages = co.wrap(function* purgeMessages() {
             logger.warn("unable to find channel [%s] for purge", this.channel);
         }
     } catch (e) {
-        logger.error("failed to purge channel [%s]:", this.channel, e);
+        logger.error("failed to purge channel [%s]: %s", this.channel, util.inspect(e));
     }
 
 
