@@ -56,7 +56,7 @@ module.exports = {
         ]
     },
     welcome: {
-        message: fs.readFileSync("welcome.txt", "utf8")
+        message: fs.readFileSync("welcome.sample.txt", "utf8")
     },
 
     purge: {
