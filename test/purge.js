@@ -27,6 +27,33 @@ describe('purge', function () {
         defaultGuild: { channels : { } }
     };
 
+    var purgePromise;
+
+    function createMessages(size, deleteStub) {
+        var msgArray = [];
+        // create a Map of messages
+        for(var i = 0; i < size; i++) {
+            msgArray.push([i, { delete: deleteStub }]);
+        }
+        return new Map(msgArray);
+    }
+
+    function hookPurge() {
+        // create a promise expecting the nextPurge to
+        // be fullfilled
+        return new Promise(function (resolve, reject) {
+            // unfortunately the purge is wrapped in co and 
+            // does not synchronously execute when we advance
+            // the clock, so we have to have it resolve the 
+            // Promise within it
+            purge.Purge.prototype.nextPurge = function() {
+                nextPurge.apply(this, arguments);
+                //
+                resolve(true);
+            };
+        });
+    }
+
     //this.fetchMessages({ limit: messages }).then(msgs => this.bulkDelete(msgs, filterOld));
 
     // myMap.size
@@ -70,45 +97,69 @@ describe('purge', function () {
     });
 
     describe('#purge()', function () {
-        it('should search for the channels', function () {
-            app.config.purge = {
-                "test1": "6 8 * * *"
-            }
-            return expect(purge.init(app)).to.be.fulfilled;
-            //expect(app.defaultGuild.channels.find.calledOnce).to.be.true;    
-        });
 
-        it('should remove 20 messages', function () {
+        it('should bulk remove 20 messages', function () {
 
-            ch1.fetchMessages.onCall(0).returns(Promise.resolve({ size: 20}));
-            ch1.fetchMessages.onCall(1).returns(Promise.resolve({ size: 0}));
+            var msg20 = createMessages(20);
+            msg20.filter = sandbox.stub().returns(msg20);
 
-            ch1.bulkDelete.onCall(0).returns(Promise.resolve({ size: 20}));
+            var msg0 = createMessages(0);
+            msg0.filter = sandbox.stub().returns(msg0);
+
+            ch1.fetchMessages.onCall(0).returns(Promise.resolve(msg20));
+            ch1.fetchMessages.onCall(1).returns(Promise.resolve(msg0));
+
+            ch1.bulkDelete.onCall(0).returns(Promise.resolve(msg20));
 
             app.config.purge = {
                 "test1": "6 8 * * *"
             }
 
             expect(purge.init(app)).to.be.fulfilled;
-            // create a promise expecting the nextPurge to
-            // be fullfilled
-            var npp = new Promise(function (resolve, reject) {
-                // unfortunately the purge is wrapped in co and 
-                // does not synchronously execute when we advance
-                // the clock, so we have to have it resolve the 
-                // Promise within it
-                purge.Purge.prototype.nextPurge = function() {
-                    nextPurge.apply(this, arguments);
-                    //
-                    resolve(true);
-                };
-            });
+
+            var purgePromise = hookPurge();
 
             // forward the time 24 hours
             sandbox.clock.tick(86400 * 1000); 
 
-            return expect(npp).to.be.fulfilled.then(function () {
-                expect(ch1.fetchMessages.callCount).to.equal(2);
+            return expect(purgePromise).to.be.fulfilled.then(function () {
+                expect(ch1.fetchMessages.callCount).to.equal(3);
+                expect(ch1.bulkDelete.callCount).to.equal(1);
+            });
+
+        });
+
+        it('should individually remove 20 messages', function () {
+
+            var msgDelete = sandbox.stub().returns(Promise.resolve());
+
+            var msg0 = createMessages(0, msgDelete);
+            msg0.filter = sandbox.stub().returns(msg0);
+
+            var msg20 = createMessages(20, msgDelete);
+            msg20.filter = sandbox.stub().returns(msg0);
+
+            ch1.fetchMessages.onCall(0).returns(Promise.resolve(msg20));
+            ch1.fetchMessages.onCall(1).returns(Promise.resolve(msg20));
+            ch1.fetchMessages.onCall(2).returns(Promise.resolve(msg0));
+
+            ch1.bulkDelete.onCall(0).returns(Promise.resolve(msg20));
+
+            app.config.purge = {
+                "test1": "6 8 * * *"
+            }
+
+            expect(purge.init(app)).to.be.fulfilled;
+
+            var purgePromise = hookPurge();
+
+            // forward the time 24 hours
+            sandbox.clock.tick(86400 * 1000); 
+
+            return expect(purgePromise).to.be.fulfilled.then(function () {
+                expect(ch1.fetchMessages.callCount).to.equal(3);
+                expect(ch1.bulkDelete.callCount).to.equal(0);
+                expect(msgDelete.callCount).to.equal(20);
             });
 
         });

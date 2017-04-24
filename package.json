@@ -1,6 +1,6 @@
 {
   "name": "crc-bot",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Discord bot for Chaos Raiding Central",
   "main": "bot.js",
   "scripts": {

@@ -31,15 +31,29 @@ Purge.prototype.purgeMessages = co.wrap(function* purgeMessages() {
         var c = this.app.defaultGuild ? this.app.defaultGuild.channels.find('name', this.channel) : undefined;
         if(c) {
             var m;
-
+            // first bulk delete
             do {
                 m = yield c.fetchMessages();
+                var after = Date.now() - (86400 * 1000 * 14); // two weeks prior
+                m = m.filter(timestamp =>
+                    timestamp > after
+                );
                 if(m.size > 1) {
                     logger.debug("removing [%s] messages from [%s]", m.size, this.channel);
                     m = yield c.bulkDelete(m);
                 }
                 
-            } while(m.size > 1)
+            } while(m.size > 1);
+            // then individually delete
+            do {
+                m = yield c.fetchMessages();
+                if(m.size > 0) {
+                    logger.debug("removing [%s] messages from [%s]", m.size, this.channel);
+                    for(var msg of m.values()) {
+                        yield msg.delete();      
+                    }
+                }
+            } while(m.size > 0);
         } else {
             logger.warn("unable to find channel [%s] for purge", this.channel);
         }
