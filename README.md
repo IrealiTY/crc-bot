@@ -40,6 +40,10 @@ This is the Discord Bot used for the Chaos Raiding Central (short CRC). The idea
     
 Gives you (the user) a certain role. Roles are case insensitive. Roles can be defined in `config.js`.
 
+    .iamnot ROLENAME
+    
+Removes said role name from you.
+
 
 ## Functionality
 
