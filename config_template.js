@@ -72,5 +72,10 @@ module.exports = {
         */
         "casual_content": "0 4 * * *"
     },
+
+    accuracy: {
+
+    },
+
     commandPrefix: "."
 };
