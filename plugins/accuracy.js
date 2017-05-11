@@ -20,7 +20,7 @@ function acc(cmd) {
         return cmd.dest.send("```" + [
             "                Front   Flank   Caster",
             "Alex Savage	 699     646     592",
-            "Zurvan  	     699     646     582"
+            "Zurvan  	    699     646     582"
         ].join("\n") + "```");
 
     });
