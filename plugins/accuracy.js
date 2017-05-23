@@ -21,6 +21,7 @@ function acc(cmd) {
             "                Front   Flank   Caster",
             "Alex Savage	 699     646     592",
             "Zurvan  	    699     646     582"
+            "Stormblood     NONE LOL"
         ].join("\n") + "```");
 
     });
