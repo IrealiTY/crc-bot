@@ -57,7 +57,7 @@ function logGuildMemberAdd(member) {
 
     if(app.config.monitor.output && app.defaultGuild) {
 
-        output.sendMessage("[" + new Date().toLocaleTimeString() + "] **User Joined**", { embed: {
+        output.send("[" + new Date().toLocaleTimeString() + "] **User Joined**", { embed: {
             color: 0x30A030,
             author: {
                 name: member.displayName + " ("+member.user.id+")",
@@ -74,7 +74,7 @@ function logGuildMemberRemove(member) {
 
     if(app.config.monitor.output && app.defaultGuild) {
 
-        output.sendMessage("[" + new Date().toLocaleTimeString() + "] **User Left**", { embed: {
+        output.send("[" + new Date().toLocaleTimeString() + "] **User Left**", { embed: {
             color: 0xA03030,
             author: {
                 name: member.displayName + " ("+member.user.id+")",
@@ -92,7 +92,7 @@ function logMessageEvent(msg) {
 
     if(app.config.monitor.output && app.defaultGuild) {
 
-        output.sendMessage("[" + msg.createdAt.toLocaleTimeString() + "] **New Message** " + msg.channel , { embed: {
+        output.send("[" + msg.createdAt.toLocaleTimeString() + "] **New Message** " + msg.channel , { embed: {
             color: 0x3030A0,
             author: {
                 name: msg.author.username,
@@ -111,7 +111,7 @@ function logMessageDeleteEvent(msg) {
 
     if(app.config.monitor.output && app.defaultGuild) {
 
-        output.sendMessage("[" + msg.createdAt.toLocaleTimeString() + "] **Message Deleted** " + msg.channel , { embed: {
+        output.send("[" + msg.createdAt.toLocaleTimeString() + "] **Message Deleted** " + msg.channel , { embed: {
             color: 0xA03030,
             author: {
                 name: msg.author.username,
@@ -135,7 +135,7 @@ function logMessageUpdatedEvent(msg0, msg1) {
 
     co(function *() {
 
-        yield output.sendMessage("[" + msg0.createdAt.toLocaleTimeString() + "] **Message Updated** " + msg0.channel + " From:", {
+        yield output.send("[" + msg0.createdAt.toLocaleTimeString() + "] **Message Updated** " + msg0.channel + " From:", {
             split: true,
             embed: {
                 color: 0x30A030,
@@ -148,7 +148,7 @@ function logMessageUpdatedEvent(msg0, msg1) {
             }
         });
 
-        yield output.sendMessage("[" + msg1.createdAt.toLocaleTimeString() + "] **Message Updated** " + msg1.channel + " To:", {
+        yield output.send("[" + msg1.createdAt.toLocaleTimeString() + "] **Message Updated** " + msg1.channel + " To:", {
             split: true,
             embed: {
                 color: 0x30A030,

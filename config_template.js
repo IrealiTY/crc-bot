@@ -44,9 +44,13 @@ module.exports = {
     },
     throttle: {
         "player_lfg": {
-            maxTokens: 5,
-            tokenInterval: 3600
-        } 
+            maxTokens: 1,
+            tokenInterval: 86400
+        },
+        "player_lfm": {
+            maxTokens: 1,
+            tokenInterval: 86400
+        }, 
     },
     monitor: {
         output: "monitor",
@@ -70,7 +74,7 @@ module.exports = {
          │    └─────────────── hour (0 - 23)
          └──────────────────── minute (0 - 59)
         */
-        "casual_content": "0 4 * * *"
+        "partyfinder": "0 4 * * *"
     },
 
     accuracy: {

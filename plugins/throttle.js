@@ -32,14 +32,13 @@ function checkMessage(msg) {
         : channelBuckets[msg.author.id] = new TokenBucket(config.maxTokens, config.tokenInterval);
 
     // drain the bucket
+    if (msg.author.bot) return;
     if(!bucket.drain()) {
         // failed to drain the bucket - user has exceeded message limit
-        msg.delete(expire); // dump the response
-        msg.channel.send(msg.author + " you cannot post for " + 
-                Math.ceil( (bucket.nextFill - Date.now()) / 1000 ) + " seconds").
-        then(function(response) {
-            response.delete(3000);
-        });
+        msg.delete(expire) // dump the response
+        .then(msg => console.log(`Deleted message from ${msg.author}`));
+         msg.author.send("Hello, " + msg.author + " this is an automated message. Your latest message on CRC has been deleted due to our 24-hour repost rule. You will be able to post again in the LFG/LFM channel in " + 
+                Math.ceil( ((bucket.nextFill - Date.now()) / 1000) / 60 ) + " minutes. Please check the rules in #announcements for more information.");
     } 
 
 }
