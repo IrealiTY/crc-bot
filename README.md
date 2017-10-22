@@ -89,6 +89,17 @@ Can be configured in the `config.js`. `output:` Defines in which channel the log
         ]
     }
 
+
+### Throtteling
+The `throttle.js` handles a time-out system via tokens. 1 Token equals to how a user can post within the given periode of time.
+    
+    throttle: {
+        "static_lfm": {    <------- Channel Name, spelling is key....
+            maxTokens: 1,  <------- Tokens == How often a user can post
+            tokenInterval: 86400 <------- Timeout before a user can post again in seconds
+        },
+    },
+
 ====
 
 Credit goes to [GeekyDeaks](https://github.com/GeekyDeaks). Drop him a donation for that ;)
