@@ -50,11 +50,11 @@ module.exports = {
         "player_lfm": {
             maxTokens: 1,
             tokenInterval: 86400
-        }, 
+        },
     },
     monitor: {
         output: "monitor",
-        events: [ 
+        events: [
             "message", "messageDelete", "messageUpdate",
             "guildMemberAdd", "guildMemberRemove"
         ]
@@ -78,6 +78,10 @@ module.exports = {
     },
 
     accuracy: {
+
+    },
+
+    help: {
 
     },
 

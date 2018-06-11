@@ -57,10 +57,10 @@ describe('throttle', function () {
 
     describe('#onMessage', function () {
 
-        it('should allow the first 5 messages', function () {
+        it('should allow the first message', function () {
             var msg;
 
-            for(var i = 0; i < 5; i++) {
+            for(var i = 0; i < 1; i++) {
                 msg = { 
                     author: author, channel: channel, id: i,
                     delete: sandbox.stub().returns(Promise.resolve())
@@ -74,7 +74,7 @@ describe('throttle', function () {
             var msg;
             var response;
 
-            for(var i = 0; i < 10; i++) {
+            for(var i = 0; i < 3; i++) {
                 response = { delete: sandbox.stub() };
                 channel.send = sandbox.stub().returns(Promise.resolve(response));
                 msg = { 
