@@ -85,5 +85,9 @@ module.exports = {
 
     },
 
+    clear: {
+
+    },
+
     commandPrefix: "."
 };
