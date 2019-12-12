@@ -118,7 +118,8 @@ function parseCommand(msg) {
 
         var cmd = {
             msg: msg,
-            dest: msg.channel
+            dest: msg.channel,
+            author: msg.author
         };
 
         logger.debug("got message from [%s] in channel [%s]: ", 
